@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Read bme280 sensor and prints out data.
+# Made for odroid C4, requires bme280 lib
+
 # Import modules for time and to access sensor
 import time
 from smbus import SMBus
