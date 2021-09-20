@@ -40,14 +40,19 @@ def on_connect(client, userdata, flags, rc):
 # ----------------------------------------------------------------------
 # Callback for received messages (after subscribe)
 def on_message(client, userdata, msg):
+    print(msg.topic+" "+str(msg.payload))
     subtopic = msg.topic[len(LISTENTOPIC):]
     payload = msg.payload.decode("utf-8")
     print(subtopic+" "+payload)
+    iso = time.ctime()
     data=[{
-	"topic" : subtopic,
-	"message" : payload
-	}]
-
+    "measurement":"mqtt",
+    "time":iso,
+    "fields": {
+    "topic" : subtopic,
+    "message" : payload
+    }
+    }]
     influxclient.write_points(data)
 
 
