@@ -3,6 +3,7 @@
 # Holt Aktuelle Aussenwetterdaten von Openweathermap.com
 # Schreibt in Influx-DB und 
 # Script muss mit root-rechten laufen da sonst der Sensor nicht ausgelesen werden kann
+# es sei denn der User befindet sich in der i2c-Gupper
 # (w) Stephan Elsner 2021
 
 import bme280
@@ -17,6 +18,14 @@ from influxdb import InfluxDBClient
 from azure.iot.device.aio import IoTHubDeviceClient
 
 
+# -----------------------------------------------------------------------------------------
+# Azure IOT Hub Connection String
+CONNECTION_STRING = "<Insert device connection string here>"
+
+# Openweathermap APP ID
+APP_ID = "<Insert APP ID here>"
+# -----------------------------------------------------------------------------------------
+
 # Set up logging
 log = "/var/log/bme280.log"
 alog = logging.getLogger('asyncio')
@@ -28,8 +37,6 @@ handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s %(mes
 alog.info('bme280 script started')
 
 
-# Azure IOT Hub Connection String
-CONNECTION_STRING = "<Insert device connection string here>"
 
 # ------------------------------------------------------------
 # Datenbank parameter
@@ -83,7 +90,7 @@ async def main():
 					logging.info("request openweathermap")
 					print ("Abruf von Wetterdaten")
 					try:
-						r = requests.get('https://api.openweathermap.org/data/2.5/weather?q=L%C3%BCbeck&appid=b702c266e5dfbee0472987f9c8651d11&units=metric')
+						r = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q=L%C3%BCbeck&appid={APP_ID}&units=metric')
 						j = json.loads(r.text)
 						outtemp = j['main']['temp']
 						outpr= j['main']['pressure']
