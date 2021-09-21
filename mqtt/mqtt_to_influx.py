@@ -12,24 +12,9 @@ import time
 import paho.mqtt.client as mqtt
 from datetime import datetime
 from influxdb import InfluxDBClient
+from  settings import *
 
-# ------------------------------------------------------------
-# Parameter
-# ------------------------------------------------------------
-
-MQTTBROKER = "<mqtt broker url>"
-MQTTPORT = 8883
-MQTTUSER = "<your mqtt user>"
-MQTTPASSWD="<your mqtt pw>"
-LISTENTOPIC = "mytopic/"            # Topic to listen to (will subscribe to mytopic/# )
-host     = 'localhost'
-port     = 8086                     # default
-user     = '<influxdb user>'
-password = '<influxdb pw>'
-dbname   = '<influx database name>'
-
-
-influxclient = InfluxDBClient(host, port, user, password, dbname)
+influxclient = InfluxDBClient(INFLUX_HOST, INFLUX_PORT, INFLUX_USER, INFLUX_PW, INFLUX_DBNAME)
 client = mqtt.Client()
 
 # ----------------------------------------------------------------------
@@ -41,7 +26,7 @@ def on_connect(client, userdata, flags, rc):
 # Callback for received messages (after subscribe)
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
-    subtopic = msg.topic[len(LISTENTOPIC):]
+    subtopic = msg.topic[len(MQTT_SUBSCRIBE):]
     payload = msg.payload.decode("utf-8")
     print(subtopic+" "+payload)
     iso = time.ctime()
@@ -69,11 +54,11 @@ client.on_publish = on_publish
 
 # connect to mqtt broker
 client.tls_set(tls_version=mqtt.ssl.PROTOCOL_TLS)
-client.username_pw_set(MQTTUSER,MQTTPASSWD)
-client.connect(MQTTBROKER,MQTTPORT)
+client.username_pw_set(MQTT_USER,MQTT_PW)
+client.connect(MQTT_BROKER,MQTT_PORT)
 
 # subscribe to topic
-client.subscribe(LISTENTOPIC+"#");
+client.subscribe(MQTT_SUBSCRIBE+"#");
 print("running...")
 
 client.loop_forever()
