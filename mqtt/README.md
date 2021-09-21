@@ -1,4 +1,4 @@
-# mqtt_to_influy.py
+# mqtt_to_influx.py
 
 Script to write incoming mqtt messages to a local influx db.
 Mqtt broker, influx db connections and subscribed topic can be configured in settings.py
